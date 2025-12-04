@@ -83,9 +83,9 @@ lemma f_n_dvd_prod_f_i (n m : ℕ) (hmn : m > n) : fermat n ∣ ∏ i < m, ferma
   rw [prod_finset_m_eq n m hmn]
   simp
 
-
 lemma unique_factor_2 (p : ℕ) (hpt : p ∣ 2) (hpp : Nat.Prime p) : p = 2 := by
-  sorry
+  rw [←Nat.prime_dvd_prime_iff_eq hpp Nat.prime_two]
+  exact hpt
 
 lemma distinct_fermat_gcd_1 (m n p : ℕ) (hmn : m > n)
     (hp : Nat.Prime p) (hpn : p ∣ fermat n) (hqm : p ∣ fermat m)
@@ -100,8 +100,21 @@ lemma distinct_fermat_gcd_1 (m n p : ℕ) (hmn : m > n)
 
   exact unique_factor_2 p pd2_ish hp
 
+lemma two_dvd_power (m : ℕ) : 2 ∣ 2 ^ 2 ^ m := by
+  refine (Nat.dvd_prime_pow ?_).mpr ?_
+  · exact Nat.prime_two
+  · use 1
+    simp [Nat.one_le_two_pow]
+
 lemma two_ndivd_fermat (m : ℕ) : ¬2 ∣ 2 ^ 2 ^ m + 1 := by
-  sorry
+  simp
+  rw [Nat.mod_eq_iff]
+  simp
+  have hh : 2 ∣ 2 ^ 2 ^ m := two_dvd_power m
+  rw [Nat.dvd_iff_mod_eq_zero] at hh
+  rw [Nat.mod_eq_iff] at hh
+  simp at hh
+  assumption
 
 lemma fermat_minfac_distinct (m n : ℕ) : m ≠ n → (fermat m).minFac ≠ (fermat n).minFac := by
   intro hmn
